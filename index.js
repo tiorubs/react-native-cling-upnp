@@ -1,56 +1,55 @@
-
-import { NativeModules,DeviceEventEmitter } from 'react-native';
+import { NativeModules, DeviceEventEmitter } from "react-native";
 
 const { RNUpnp } = NativeModules;
 
-const UPNP = {}
+const UPNP = {};
 
 UPNP.testPing = () => {
-    RNUpnp.ping();
+  RNUpnp.ping();
 };
 
-UPNP.loadSongs = () => {
-    RNUpnp.loadSongs();
+UPNP.loadMedias = () => {
+  RNUpnp.loadMedias();
 };
 
 UPNP.initUPNP = () => {
-    RNUpnp.initUPNP();
+  RNUpnp.initUPNP();
 };
 
-UPNP.reloadSpeakers = () => {
-    RNUpnp.reloadSpeakers();
+UPNP.reloadTVs = () => {
+  RNUpnp.reloadTVs();
 };
 
-UPNP.setCurrentSpeakerIP = (ip) => {
-    RNUpnp.setCurrentSpeakerIP(ip);
+UPNP.setCurrentTVIP = (ip) => {
+  RNUpnp.setCurrentTVIP(ip);
 };
 
 UPNP.pause = () => {
-    RNUpnp.onPause();
+  RNUpnp.onPause();
 };
 
-UPNP.next  = () => {
-    RNUpnp.next();
+UPNP.next = () => {
+  RNUpnp.next();
 };
 
 UPNP.previous = () => {
-    RNUpnp.previous();
+  RNUpnp.previous();
 };
 
 UPNP.refresh = () => {
-    RNUpnp.refresh();
+  RNUpnp.refresh();
 };
 
 UPNP.destroy = () => {
-    RNUpnp.onDestroy();
+  RNUpnp.onDestroy();
 };
 
-UPNP.songSelected = (callback) => {
-    return DeviceEventEmitter.addListener('song_item', callback);
+UPNP.zSelected = (callback) => {
+  return DeviceEventEmitter.addListener("media_item", callback);
 };
 
-UPNP.receivedSpeakers = (callback) => {
-    return DeviceEventEmitter.addListener('speaker-found', callback);
+UPNP.receivedTVs = (callback) => {
+  return DeviceEventEmitter.addListener("tv-found", callback);
 };
 
 export default UPNP;

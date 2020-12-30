@@ -62,7 +62,7 @@ public class RNUpnpModule extends ReactContextBaseJavaModule implements IDeviceD
     public static IUpnpServiceController upnpServiceController = null;
     public static IFactory factory = null;
 
-    private static String mCurrentSpeakerIP;
+    private static String mCurrentTVIP;
 
     protected List<IUpnpDevice> list = new ArrayList<>();
 
@@ -76,15 +76,15 @@ public class RNUpnpModule extends ReactContextBaseJavaModule implements IDeviceD
 
     }
 
-    public static String getCurrentSpeakerIP() {
-        return mCurrentSpeakerIP;
+    public static String getCurrentTVIP() {
+        return mCurrentTVIP;
     }
 
     @ReactMethod
-    public void setCurrentSpeakerIP(String currentSpeakerIP) {
-        mCurrentSpeakerIP = currentSpeakerIP;
+    public void setCurrentTVIP(String currentTVIP) {
+        mCurrentTVIP = currentTVIP;
 
-        Log.e("setCurrentSpeakerIP", "currentSpeakerIP ==> " + currentSpeakerIP);
+        Log.e("setCurrentTVIP", "currentTVIP ==> " + currentTVIP);
     }
 
     @ReactMethod
@@ -129,7 +129,7 @@ public class RNUpnpModule extends ReactContextBaseJavaModule implements IDeviceD
     }
 
     @ReactMethod
-    public void loadSongs() {
+    public void loadMedias() {
         Log.d(TAG, "start loadMusics");
         mReactContext.startActivity(new Intent(mReactContext, Main.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
@@ -161,7 +161,7 @@ public class RNUpnpModule extends ReactContextBaseJavaModule implements IDeviceD
     }
 
     public static void selectRenderer() {
-        if (null == mCurrentSpeakerIP || mCurrentSpeakerIP.trim().isEmpty()) return;
+        if (null == mCurrentTVIP || mCurrentTVIP.trim().isEmpty()) return;
         if (null == upnpServiceController) return;
 
         final Collection<IUpnpDevice> upnpDevices = upnpServiceController.getServiceListener()
@@ -176,7 +176,7 @@ public class RNUpnpModule extends ReactContextBaseJavaModule implements IDeviceD
             RemoteDevice remoteDevice = (RemoteDevice) cDevice.getDevice();
             RemoteDeviceIdentity remoteDeviceIdentity = remoteDevice.getIdentity();
             String host = remoteDeviceIdentity.getDescriptorURL().getHost();
-            if (mCurrentSpeakerIP.equals(host)) {
+            if (mCurrentTVIP.equals(host)) {
                 upnpServiceController.setSelectedRenderer(deviceDisplay.getDevice(), false);
                 return;
             }
@@ -196,13 +196,13 @@ public class RNUpnpModule extends ReactContextBaseJavaModule implements IDeviceD
     }
 
     @ReactMethod
-    public void reloadSpeakers() {
-        writeSpeakerList();
+    public void reloadTVs() {
+        writeTVList();
     }
 
-    private List<Item> getSongList() {
-        Log.e("getSongList", "MediaServer.getAddress() ==> " + MediaServer.getAddress());
-        List<Item> songList = new ArrayList<>();
+    private List<Item> getMediaList() {
+        Log.e("getMediaList", "MediaServer.getAddress() ==> " + MediaServer.getAddress());
+        List<Item> mediaList = new ArrayList<>();
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String[] columns = {
                 MediaStore.Audio.Media._ID,
@@ -239,7 +239,7 @@ public class RNUpnpModule extends ReactContextBaseJavaModule implements IDeviceD
                             + (duration % (1000 * 60 * 60)) / (1000 * 60) + ":"
                             + (duration % (1000 * 60)) / 1000);
 
-                    songList.add(new MusicTrack(id, "", title, creator, album, new PersonWithRole(creator, "Performer"), res));
+                    mediaList.add(new MusicTrack(id, "", title, creator, album, new PersonWithRole(creator, "Performer"), res));
 
                     Log.v(TAG, "Added audio item " + title + " from " + filePath);
 
@@ -248,7 +248,7 @@ public class RNUpnpModule extends ReactContextBaseJavaModule implements IDeviceD
             cursor.close();
         }
 
-        return songList;
+        return mediaList;
     }
 
     @Override
@@ -275,12 +275,12 @@ public class RNUpnpModule extends ReactContextBaseJavaModule implements IDeviceD
                 }
                 Log.v(TAG, "addedDevice : " + list.size());
 
-                writeSpeakerList();
+                writeTVList();
             }
         });
     }
 
-    public void writeSpeakerList() {
+    public void writeTVList() {
         WritableMap params = Arguments.createMap();
         WritableArray writableArray = getHostsAsWritableArray();
         if (null == writableArray) return;
@@ -288,7 +288,7 @@ public class RNUpnpModule extends ReactContextBaseJavaModule implements IDeviceD
         params.putArray("hosts", writableArray);
         mReactContext
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit("speaker-found", params);
+                .emit("tv-found", params);
     }
 
     @Override
